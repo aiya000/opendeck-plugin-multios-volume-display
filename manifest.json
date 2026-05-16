@@ -1,0 +1,31 @@
+{
+  "Name": "MultiOS Volume Display",
+  "Author": "aiya000",
+  "Version": "1.0.0",
+  "Category": "System",
+  "Icon": "icon",
+  "OS": [
+    { "Platform": "mac" },
+    { "Platform": "windows" },
+    { "Platform": "linux" }
+  ],
+  "CodePaths": {
+    "aarch64-apple-darwin": "main.ts",
+    "x86_64-apple-darwin": "main.ts",
+    "x86_64-pc-windows-msvc": "main.bat",
+    "x86_64-unknown-linux-gnu": "main.ts"
+  },
+  "CodePathMac": "main.ts",
+  "CodePathWin": "main.bat",
+  "CodePathLin": "main.ts",
+  "Actions": [
+    {
+      "UUID": "io.github.aiya000.multios-volume-display",
+      "Name": "Volume",
+      "Icon": "icon",
+      "Tooltip": "Displays current output volume level",
+      "Controllers": ["Keypad"],
+      "States": [{}]
+    }
+  ]
+}
