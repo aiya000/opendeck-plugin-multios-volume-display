@@ -1,8 +1,8 @@
 {
-  "Name": "MultiOS Volume Display",
+  "Name": "Dynamic MultiOS Volume Display",
   "Author": "aiya000",
   "Version": "1.0.0",
-  "Category": "System",
+  "Category": "Dynamic MultiOS Volume Display",
   "Icon": "icon",
   "OS": [
     { "Platform": "mac" },
@@ -21,7 +21,7 @@
   "Actions": [
     {
       "UUID": "io.github.aiya000.multios-volume-display",
-      "Name": "Volume",
+      "Name": "Volume-Display",
       "Icon": "icon",
       "Tooltip": "Displays current output volume level",
       "Controllers": ["Keypad"],
