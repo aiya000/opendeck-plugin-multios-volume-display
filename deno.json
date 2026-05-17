@@ -1,4 +1,8 @@
 {
+  "imports": {
+    "zod": "npm:zod@^3",
+    "@total-typescript/ts-reset": "npm:@total-typescript/ts-reset"
+  },
   "fmt": {
     "indentWidth": 2,
     "singleQuote": true,
