@@ -1,13 +1,28 @@
 #!/usr/bin/env -S deno run --allow-net --allow-run --allow-read
 
-const args = Deno.args
+import '@total-typescript/ts-reset'
+import { z } from 'zod'
+
+interface VolumeState {
+  volume: number
+  muted: boolean
+}
+
+const streamDeckMessageSchema = z.object({
+  event: z.string(),
+  context: z.string(),
+})
 
 function getArg(name: string): string {
-  const index = args.findIndex((a) => a.toLowerCase() === name.toLowerCase())
-  if (index === -1 || index + 1 >= args.length) {
+  const index = Deno.args.findIndex((a) => a.toLowerCase() === name.toLowerCase())
+  const value = Deno.args[index + 1]
+  if (index === -1) {
     throw new Error(`Missing CLI flag: ${name}`)
   }
-  return args[index + 1]
+  if (value === undefined) {
+    throw new Error(`Missing value for CLI flag: ${name}`)
+  }
+  return value
 }
 
 const port = parseInt(getArg('-port'))
@@ -16,12 +31,7 @@ const registerEvent = getArg('-registerEvent')
 
 const activeContexts = new Set<string>()
 
-interface VolumeState {
-  volume: number
-  muted: boolean
-}
-
-async function getVolumeState(): Promise<VolumeState> {
+function getVolumeState(): Promise<VolumeState> {
   switch (Deno.build.os) {
     case 'darwin':
       return getMacVolumeState()
@@ -111,12 +121,15 @@ function buildImage({ volume, muted }: VolumeState): string {
 
 const ws = new WebSocket(`ws://localhost:${port}`)
 
-ws.onopen = () => {
-  ws.send(JSON.stringify({ event: registerEvent, uuid: pluginUUID }))
-}
+ws.onopen = () => ws.send(JSON.stringify({ event: registerEvent, uuid: pluginUUID }))
 
 ws.onmessage = (event) => {
-  const msg = JSON.parse(event.data)
+  const result = streamDeckMessageSchema.safeParse(JSON.parse(event.data))
+  if (!result.success) {
+    console.error('Failed to parse WebSocket message:', result.error)
+    return
+  }
+  const msg = result.data
   if (msg.event === 'willAppear') {
     activeContexts.add(msg.context)
   } else if (msg.event === 'willDisappear') {
@@ -127,7 +140,9 @@ ws.onmessage = (event) => {
 ws.onerror = (err) => console.error('WebSocket error:', err)
 
 setInterval(async () => {
-  if (activeContexts.size === 0) return
+  if (activeContexts.size === 0) {
+    return
+  }
   const state = await getVolumeState()
   const image = buildImage(state)
   for (const context of activeContexts) {
