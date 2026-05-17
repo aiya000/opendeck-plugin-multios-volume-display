@@ -2,6 +2,7 @@
   "Name": "Dynamic MultiOS Volume Display",
   "Author": "aiya000",
   "Version": "1.0.0",
+  "Description": "Displays the current system output volume level on a Stream Deck key. Works on Linux (PulseAudio/PipeWire), macOS, and Windows. Shows volume percentage with a colour-coded bar and a mute indicator.",
   "Category": "Dynamic MultiOS Volume Display",
   "Icon": "icon",
   "OS": [

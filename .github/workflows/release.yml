@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Package and publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Package plugin
+        run: |
+          BUNDLE_ID="io.github.aiya000.multios-volume-display"
+          zip -j "${BUNDLE_ID}.zip" \
+            manifest.json \
+            main.ts \
+            main.bat \
+            windows-audio.ps1 \
+            icon.svg
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: io.github.aiya000.multios-volume-display.zip
+          generate_release_notes: true
